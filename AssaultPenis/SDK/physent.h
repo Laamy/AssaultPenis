@@ -49,13 +49,15 @@ public: // Functions
 		return Health > 0;
 	}
 
+	// https://github.com/assaultcube/AC/blob/master/source/src/entity.h#L149C14-L149C14
 	__forceinline void resetinterp()
 	{
-		newpos = o;
+		newpos = origin;
 		newpos.z -= eyeheight;
 		deltapos = Vector3<float>(0, 0, 0);
 	}
 
+	// https://github.com/assaultcube/AC/blob/master/source/src/entity.h#L156C6-L156C6
 	__forceinline void reset()
 	{
 		vel.x = vel.y = vel.z = eyeheightvel = 0.0f;
