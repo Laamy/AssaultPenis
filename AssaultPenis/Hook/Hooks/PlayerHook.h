@@ -6,7 +6,7 @@ void* __o__ticklp;
 
 void TickLocalplayerDetour(void* _this, physent* player) {
 
-	player->maxSpeed
+	std::cout << "tick localplayer : " << player << std::endl;
 
 	// dont call original else ur gonna crash it
 }

@@ -20,13 +20,14 @@ public:
 	bool onladder; //0x005E 
 	bool jumpnext; //0x005F 
 	bool jumpd; //0x0060 
-	bool crouchedinair; //0x0061 
-	bool trycrouch; //0x0062 
-	bool cancollide; //0x0063 
-	bool stuck; //0x0064 
-	bool scoping; //0x0065 
+	bool crouching; //0x0061 
+	bool crouchedinair; //0x0062 
+	bool trycrouch; //0x0063 
+	bool cancollide; //0x0064 
+	bool stuck; //0x0065 
+	bool scoping; //0x0066 
 private:
-	char pad_0x0066[0x2]; //0x0066 (this is an issue with C++ so these two bytes are never actually used in the game)
+	char pad_0x0066[0x1]; //0x0066 (this is an issue with C++ so this byte is never actually used in the game)
 public:
 	__int32 lastjump; //0x0068 
 	float lastjumpheight; //0x006C 
@@ -42,4 +43,25 @@ private:
 	char pad_0x0080[0x6C]; //0x0080 (not sure what these are but I'll map them out later)
 public:
 	__int16 Health; //0x00EC 
+
+public: // Functions
+	__forceinline bool isAlive() {
+		return Health > 0;
+	}
+
+	__forceinline void resetinterp()
+	{
+		newpos = o;
+		newpos.z -= eyeheight;
+		deltapos = Vector3<float>(0, 0, 0);
+	}
+
+	__forceinline void reset()
+	{
+		vel.x = vel.y = vel.z = eyeheightvel = 0.0f;
+		move = strafe = 0;
+		timeinair = lastjump = lastsplash = 0;
+		onfloor = onladder = inwater = jumpnext = jumpd = crouching = crouchedinair = trycrouch = stuck = false;
+		last_pos = 0;
+	}
 };
