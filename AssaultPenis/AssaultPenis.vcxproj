@@ -170,6 +170,9 @@
     <ClInclude Include="Libs\minhook\hde\table64.h" />
     <ClInclude Include="Libs\minhook\minhook.h" />
     <ClInclude Include="Libs\minhook\trampoline.h" />
+    <ClInclude Include="Module\Module.h" />
+    <ClInclude Include="Module\ModuleManager.h" />
+    <ClInclude Include="Module\Modules\InfAmmo.h" />
     <ClInclude Include="SDK\physent.h" />
     <ClInclude Include="Utils\MemoryUtils.h" />
   </ItemGroup>

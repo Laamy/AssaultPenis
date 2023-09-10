@@ -1,12 +1,14 @@
 #pragma once
 
-#include "../../SDK/physent.h"
-
 void* __o__ticklp;
 
 void TickLocalplayerDetour(void* _this, physent* player) {
 
-	std::cout << "tick localplayer : " << player << std::endl;
+	for (auto& mod : modules) {
+		if (mod->enabled) {
+			mod->OnTick(player);
+		}
+	}
 
 	// dont call original else ur gonna crash it
 }
