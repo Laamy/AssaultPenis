@@ -113,5 +113,8 @@
     <ClInclude Include="Module\Modules\ImShort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Module\Modules\Speed.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -3,7 +3,7 @@
 #define loopi(NUMGUNS) for (int i = 0; i < NUMGUNS; i++)
 enum { GUN_KNIFE = 0, GUN_PISTOL, GUN_CARBINE, GUN_SHOTGUN, GUN_SUBGUN, GUN_SNIPER, GUN_ASSAULT, GUN_GRENADE, GUN_AKIMBO, NUMGUNS };
 
-class physent {
+class physent { // i might make a bhop
 public:
 	uintptr_t** VTable;
 	Vector3<float> origin; //0x0004 
