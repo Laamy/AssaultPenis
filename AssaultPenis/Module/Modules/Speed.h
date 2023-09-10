@@ -4,7 +4,7 @@ class Speed : public Module {
 public:
 	Speed() : Module::Module("Speed", "Fancy PI Speed", "yeemi#0", Keyboard::O) {};
 
-	float speed = 3;
+	float speed = 2;
 
 	float degreesToRadians(float degrees) {
 		return degrees * (PI / 180.0f);
