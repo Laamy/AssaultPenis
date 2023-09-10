@@ -1,12 +1,18 @@
 #pragma once
 
+physent* playerPtr = nullptr;
+
 void* __o__ticklp;
 
 void TickLocalplayerDetour(void* _this, physent* player) {
 
+	if (playerPtr == nullptr) {
+		playerPtr = player;
+	}
+
 	for (auto& mod : modules) {
 		if (mod->enabled) {
-			mod->OnTick(player);
+			mod->OnTick(playerPtr);
 		}
 	}
 

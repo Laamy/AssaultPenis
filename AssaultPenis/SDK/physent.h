@@ -57,7 +57,6 @@ public:
 	int pstatshots[NUMGUNS]; //0x0140
 	int pstatdamage[NUMGUNS]; //0x0154
 
-
 public: // Functions
 	__forceinline bool isAlive() {
 		return health > 0;

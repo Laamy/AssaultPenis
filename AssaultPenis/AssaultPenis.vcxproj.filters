@@ -107,5 +107,11 @@
     <ClInclude Include="Module\Modules\InfAmmo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Module\Modules\GodMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Module\Modules\ImShort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

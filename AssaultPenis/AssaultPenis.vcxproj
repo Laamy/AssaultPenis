@@ -172,6 +172,8 @@
     <ClInclude Include="Libs\minhook\trampoline.h" />
     <ClInclude Include="Module\Module.h" />
     <ClInclude Include="Module\ModuleManager.h" />
+    <ClInclude Include="Module\Modules\GodMode.h" />
+    <ClInclude Include="Module\Modules\ImShort.h" />
     <ClInclude Include="Module\Modules\InfAmmo.h" />
     <ClInclude Include="SDK\physent.h" />
     <ClInclude Include="Utils\MemoryUtils.h" />
