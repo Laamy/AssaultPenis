@@ -1,5 +1,8 @@
 #pragma once
 
+#define loopi(NUMGUNS) for (int i = 0; i < NUMGUNS; i++)
+enum { GUN_KNIFE = 0, GUN_PISTOL, GUN_CARBINE, GUN_SHOTGUN, GUN_SUBGUN, GUN_SNIPER, GUN_ASSAULT, GUN_GRENADE, GUN_AKIMBO, NUMGUNS };
+
 class physent {
 public:
 	uintptr_t** VTable;
@@ -40,13 +43,24 @@ public:
 	float eyeheightvel; //0x0078 
 	__int32 last_pos; //0x007C 
 private:
-	char pad_0x0080[0x6C]; //0x0080 (not sure what these are but I'll map them out later)
+	char pad_0x0080[0x6C]; //0x0080 (this is most likely dynent)
 public:
-	__int16 Health; //0x00EC 
+	int health; //0x00EC 
+	int armour; //0x00F0
+	int primary; //0x00F4
+	int nextprimary; //0x00F8
+	int gunselect; //0x00FC
+	bool akimbo; //0x0100
+	int ammo[NUMGUNS]; //0x0104
+	int mag[NUMGUNS]; //0x0118
+	int gunwait[NUMGUNS]; //0x012C
+	int pstatshots[NUMGUNS]; //0x0140
+	int pstatdamage[NUMGUNS]; //0x0154
+
 
 public: // Functions
 	__forceinline bool isAlive() {
-		return Health > 0;
+		return health > 0;
 	}
 
 	// https://github.com/assaultcube/AC/blob/master/source/src/entity.h#L149C14-L149C14
@@ -65,5 +79,16 @@ public: // Functions
 		timeinair = lastjump = lastsplash = 0;
 		onfloor = onladder = inwater = jumpnext = jumpd = crouching = crouchedinair = trycrouch = stuck = false;
 		last_pos = 0;
+	}
+
+	// https://github.com/assaultcube/AC/blob/master/source/src/entity.h#L326
+	__forceinline void respawn()
+	{
+		health = 100;
+		armour = 0;
+		gunselect = 0; // GUN_PISTOL, GUN_KNIFE
+		akimbo = false;
+		loopi(NUMGUNS) ammo[i] = mag[i] = gunwait[i] = 0;
+		ammo[1] = mag[1] = 1;
 	}
 };
