@@ -40,19 +40,26 @@ class OpenALHook : public FuncHook {
 public:
 	bool Initialize() override {
 		// init openal/gl hook
+		std::cout << "Installing OpenAL Hook..." << std::endl;
 
 		HMODULE openGL32 = GetModuleHandleA("opengl32.dll");
 
 		if (!openGL32)
 			return false; // no openGL32.dll (avoid crashes)
 
+		std::cout << "Found opengl32.dll" << std::endl;
+
 		wglSwapBuffers = GetProcAddress(openGL32, "wglSwapBuffers");
 
 		if (!wglSwapBuffers)
 			return false; // no wglSwapBuffers in opengl32 (avoid crashes)
 
+		std::cout << "Found wglSwapBuffers" << std::endl;
+
 		if (not HookFunction(wglSwapBuffers, &hkWglSwapBuffersDetour, &__o__wglSwapBuffers))
 			return false; // failed to hook wglSwapBuffers
+
+		std::cout << "Hooked wglSwapBuffers, hook fully functional" << std::endl;
 
 		return true;
 	}

@@ -19,7 +19,7 @@ void InitHooks() {
     {
         if (not hooks[i]->Initialize())
         {
-            //error handling
+            std::cout << "Failed to initialize hook " << i << std::endl;
         }
     }
 }

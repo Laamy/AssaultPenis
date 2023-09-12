@@ -27,6 +27,7 @@
 
 
 void Init(HANDLE module) {
+    Console::CreateConsole("OpenAL Log");
     InitHooks();
 }
 
