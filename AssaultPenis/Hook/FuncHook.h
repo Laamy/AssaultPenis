@@ -7,12 +7,14 @@ public:
 
 // include hooks here
 #include "Hooks/PlayerHook.h"
+#include "Hooks/OpenALHook.h"
 
 void InitHooks() {
 	// initialize hooks here
 	static FuncHook* hooks[] = {
 		// include hooks here
-        &PlayerHook::Get()
+        &PlayerHook::Get(),
+        &OpenALHook::Get()
 	};
 
     for (std::size_t i = 0; i < std::size(hooks); ++i)

@@ -63,24 +63,6 @@ void Init(HANDLE module) {
     
     std::thread keypressThread(keypressLoop);
     keypressThread.detach();
-
-    // module display loop
-    while (true) {
-        // create a double buffer for console output
-        std::stringstream doubleBuffer;
-        doubleBuffer << "AssaultPenis" << std::endl;
-
-        // add each module to the display buffer
-		for (auto& mod : modules) {
-            doubleBuffer << "[" << (mod->enabled ? "x" : " ") << "] " << "[" << mod->keybind << "] " << mod->name << std::endl;
-		}
-
-        // clear the screen and print the double buffer (swap)
-        system("cls");
-        std::cout << doubleBuffer.str();
-
-        Sleep(1000 / 24); // display at 24 fps (smooth animation)
-	}
 }
 
 BOOL APIENTRY DllMain(HMODULE module, DWORD reason, LPVOID reserved)
