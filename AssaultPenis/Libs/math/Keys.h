@@ -1,9 +1,6 @@
 #pragma once
 
 // Key ID's
-/*
-
-
 std::map<uint64_t, std::string> keymapNames;
 void VF_c() {
 
@@ -125,8 +122,6 @@ void VF_c() {
 
 	keymapNames[0x300] = "SpcPkt";
 };
-
-*/
 
 namespace Keyboard
 {
