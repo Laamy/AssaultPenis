@@ -7368,6 +7368,15 @@ ImVec2 ImGui::GetFontTexUvWhitePixel()
     return GImGui->DrawListSharedData.TexUvWhitePixel;
 }
 
+void ImGui::SetWindowFontSize(float size)
+{
+    IM_ASSERT(size > 0.0f);
+    ImGuiContext& g = *GImGui;
+    ImGuiWindow* window = GetCurrentWindow();
+    window->FontWindowScale = size / ImGui::GetFont()->FontSize;
+    g.FontSize = g.DrawListSharedData.FontSize = window->CalcFontSize();
+}
+
 void ImGui::SetWindowFontScale(float scale)
 {
     IM_ASSERT(scale > 0.0f);

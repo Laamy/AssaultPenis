@@ -170,5 +170,8 @@
     <ClInclude Include="Hook\Hooks\OpenALHook.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Font\ProductSans.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

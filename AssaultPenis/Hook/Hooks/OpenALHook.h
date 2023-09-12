@@ -4,6 +4,9 @@
 #include "../../Libs/imgui/imgui_impl_opengl3.h"
 #include "../../Libs/imgui/imgui_impl_win32.h"
 
+// the fonts we want to use
+#include "../../Font/ProductSans.h"
+
 // wglSwapBuffers is the pointer I get from GetProcAddress
 void* wglSwapBuffers;
 
@@ -12,38 +15,65 @@ void* wglSwapBuffers;
 static std::add_pointer_t<BOOL WINAPI(HDC)> __o__wglSwapBuffers;
 
 static BOOL hkWglSwapBuffersDetour(HDC hdc) {
-	// does imgui have a context?
-	if (ImGui::GetCurrentContext()) {
-		if (!ImGui::GetIO().BackendRendererUserData)
-			ImGui_ImplOpenGL3_Init();
+	// does imgui have a context? if not then create it
+	if (!ImGui::GetCurrentContext()) // we dont want to double down on the context
+	{
+		// create imgui context
+		ImGui::CreateContext();
+		ImGui_ImplWin32_Init(FindWindowA(nullptr, "AssaultCube"));
 
-		// new frame
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
+		// set imgui io
+		ImGuiIO& io = ImGui::GetIO();
+		io.IniFilename = io.LogFilename = nullptr; // dont save
 
+		// import fonts
+		ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(ProductSans_compressed_data, ProductSans_compressed_size, 48.f);
+
+		// build fonts
+		ImGui::GetIO().Fonts->Build();
+	}
+
+	if (!ImGui::GetIO().BackendRendererUserData)
+		ImGui_ImplOpenGL3_Init();
+
+	// new frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	{
 		// draw basic imgui menu
-		ImGui::Begin("AssaultPenis");
+		ImGui::Begin("AssaultPenis", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground);
+
+		// push font then set font scale for current window
+		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[0]);
+		ImGui::SetWindowFontSize(16); // custom method
+
 		ImGui::Text("AssaultPenis by yeemi#0");
 
 		// add each module to the imgui menu
 		for (auto& mod : modules) {
 			std::stringstream doubleBuffer;
-			doubleBuffer << "[" << (mod->enabled ? "x" : " ") << "] " << "[" << mod->keybind << "] " << mod->name << std::endl;
-			
+			doubleBuffer << "[" << (mod->enabled ? "x" : " ") << "] " << "[" << keymapNames[mod->keybind] << "] " << mod->name << std::endl;
+
 			// avoid weird artifacts
 			std::string text = doubleBuffer.str();
 
 			// draw text
 			ImGui::Text(text.c_str());
+			ImGui::Text((std::string("- ") + mod->description.c_str()).c_str());
+			ImGui::Text("");
 		}
 
-		ImGui::End();
-
-		// render imgui
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		// restore font back to normal
+		ImGui::PopFont();
 	}
+
+	ImGui::End();
+
+	// render imgui
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	// call original wglSwapBuffers (present)
 	return __o__wglSwapBuffers(hdc);
@@ -51,11 +81,6 @@ static BOOL hkWglSwapBuffersDetour(HDC hdc) {
 
 class OpenALHook : public FuncHook {
 public:
-	void* GetAssaultCubeHWND() {
-		// get window of title "Assault Cube"
-		return FindWindowA(nullptr, "AssaultCube");
-	}
-
 	bool Initialize() override {
 		// init openal/gl hook
 		std::cout << "Installing OpenAL Hook..." << std::endl;
@@ -73,19 +98,6 @@ public:
 			return false; // no wglSwapBuffers in opengl32 (avoid crashes)
 
 		std::cout << "Found wglSwapBuffers" << std::endl;
-
-		// initalize context here
-		if (!ImGui::GetCurrentContext()) // we dont want to double down on the context
-		{
-			// create imgui context
-			ImGui::CreateContext();
-			ImGui_ImplWin32_Init(GetAssaultCubeHWND());
-
-			// set imgui io
-			ImGuiIO& io = ImGui::GetIO();
-			io.IniFilename = io.LogFilename = nullptr; // dont save
-			io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // enable keyboard controls
-		}
 
 		if (not HookFunction(wglSwapBuffers, &hkWglSwapBuffersDetour, &__o__wglSwapBuffers))
 			return false; // failed to hook wglSwapBuffers

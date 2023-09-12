@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClInclude Include="Console.h" />
     <ClInclude Include="FileIO.h" />
+    <ClInclude Include="Font\ProductSans.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Hook\FuncHook.h" />
     <ClInclude Include="Hook\Hooks\OpenALHook.h" />

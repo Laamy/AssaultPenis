@@ -58,6 +58,7 @@ void Init(HANDLE module) {
 
     std::cout << "initializing" << std::endl;
 
+    VF_c();
     InitHooks();
     InitMods();
     
