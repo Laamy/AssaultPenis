@@ -9,9 +9,11 @@ void* wglSwapBuffers;
 
 // original wglSwapBuffers call I get from minhook (not sure if their the same which they probably are)
 // not gonna check either
-void* __o__wglSwapBuffers;
+static std::add_pointer_t<BOOL WINAPI(HDC)> __o__wglSwapBuffers;
 
-BOOL hkWglSwapBuffersDetour(HDC hdc) {
+static BOOL hkWglSwapBuffersDetour(HDC hdc) {
+	std::cout << "buffers have been swapped!" << std::endl;
+
 	// does imgui have a context?
 	if (ImGui::GetCurrentContext()) {
 		if (!ImGui::GetIO().BackendRendererUserData)
@@ -21,6 +23,8 @@ BOOL hkWglSwapBuffersDetour(HDC hdc) {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
+
+		std::cout << "drawing custom overlay..." << std::endl;
 
 		// draw basic imgui menu
 		ImGui::Begin("OpenAL Hook");
@@ -33,11 +37,16 @@ BOOL hkWglSwapBuffersDetour(HDC hdc) {
 	}
 
 	// call original wglSwapBuffers (present)
-	return CallFunc<BOOL, HDC>(__o__wglSwapBuffers, hdc);
+	return __o__wglSwapBuffers(hdc);
 }
 
 class OpenALHook : public FuncHook {
 public:
+	void* GetAssaultCubeHWND() {
+		// get window of title "Assault Cube"
+		return FindWindowA(nullptr, "AssaultCube");
+	}
+
 	bool Initialize() override {
 		// init openal/gl hook
 		std::cout << "Installing OpenAL Hook..." << std::endl;
@@ -49,12 +58,25 @@ public:
 
 		std::cout << "Found opengl32.dll" << std::endl;
 
-		wglSwapBuffers = GetProcAddress(openGL32, "wglSwapBuffers");
+		wglSwapBuffers = (void*)GetProcAddress(openGL32, "wglSwapBuffers");
 
 		if (!wglSwapBuffers)
 			return false; // no wglSwapBuffers in opengl32 (avoid crashes)
 
 		std::cout << "Found wglSwapBuffers" << std::endl;
+
+		// initalize context here
+		if (!ImGui::GetCurrentContext()) // we dont want to double down on the context
+		{
+			// create imgui context
+			ImGui::CreateContext();
+			ImGui_ImplWin32_Init(GetAssaultCubeHWND());
+
+			// set imgui io
+			ImGuiIO& io = ImGui::GetIO();
+			io.IniFilename = io.LogFilename = nullptr; // dont save
+			io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // enable keyboard controls
+		}
 
 		if (not HookFunction(wglSwapBuffers, &hkWglSwapBuffersDetour, &__o__wglSwapBuffers))
 			return false; // failed to hook wglSwapBuffers
