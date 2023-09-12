@@ -15,8 +15,8 @@ struct AABB
 	{
 		this->upper.x = position.x;
 		this->lower.x = position.x + size.x;
-		this->upper.y = position.y;
-		this->lower.y = position.y + size.y;
+		this->upper.zz = position.zz;
+		this->lower.zz = position.zz + size.zz;
 		this->upper.z = position.z;
 		this->lower.z = position.z + size.z;
 	};

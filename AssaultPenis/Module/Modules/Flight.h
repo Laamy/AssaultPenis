@@ -1,20 +1,20 @@
 #pragma once
 
-class Speed : public Module {
+class Flight : public Module {
 public:
-	Speed() : Module::Module("Speed", "Fancy PI Speed", "yeemi#0", Keyboard::O) {};
+    Flight() : Module::Module("Flight", "Fancy PI Speed", "yeemi#0", Keyboard::J) {};
 
-	float speed = 3;
+    float speed = 2.5f;
 
-	float degreesToRadians(float degrees) {
-		return degrees * (PI / 180.0f);
-	}
+    float degreesToRadians(float degrees) {
+        return degrees * (PI / 180.0f);
+    }
 
-	float radiansToDegrees(float radians) {
-		return radians * (180.0f / PI);
-	}
+    float radiansToDegrees(float radians) {
+        return radians * (180.0f / PI);
+    }
 
-	void OnTick(physent* player) override {
+    void OnTick(physent* player) override {
         Vector3<float> cameraVector = player->camera;
 
         float yaw = cameraVector.x;
@@ -52,6 +52,12 @@ public:
         }
 
         player->vel.x = velocity.x;
+
+        if (Game::Keymap[VK_SPACE])
+            player->vel.z = player->vel.z * (speed / 2);
+        else if (player->crouching)
+            player->vel.z = -(speed / 2);
+
         player->vel.y = velocity.z;
-	};
+    };
 };
