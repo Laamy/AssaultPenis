@@ -4,6 +4,8 @@
 std::map<uint64_t, std::string> keymapNames;
 void VF_c() {
 
+	Log("Initializing virtual key table");
+
 	keymapNames[7] = "None";
 	keymapNames[8] = "Backspace";
 	keymapNames[9] = "Tab";

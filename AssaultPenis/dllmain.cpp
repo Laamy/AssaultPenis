@@ -11,6 +11,9 @@
 #include <iostream>
 #include <mutex>
 
+#define Log(msg, ...) printf_s(msg, __VA_ARGS__); printf_s("\n");
+#define SplitLog() std::cout << std::endl;
+
 #include "Libs/minhook/minhook.h"
 #include "Libs/math/Math.h"
 
@@ -54,22 +57,31 @@ void keypressLoop() {
 }
 
 void Init(HANDLE module) {
+    // init uwp supported console
     Console::CreateConsole("TemplateCheat");
+    Log("Created console");
 
-    std::cout << "initializing" << std::endl;
+    VF_c(); // init the virtual function table
 
-    VF_c();
-    InitHooks();
-    InitMods();
+    SplitLog(); // quick \r\n split
+
+    InitHooks(); // init the hooks
+
+    SplitLog(); // quick \r\n split
+
+    InitMods(); // init the modules
     
+    // start the keypress thread
     std::thread keypressThread(keypressLoop);
     keypressThread.detach();
 }
 
+// cheat entry point
 BOOL APIENTRY DllMain(HMODULE module, DWORD reason, LPVOID reserved)
 {
     if (reason == DLL_PROCESS_ATTACH) {
-        CreateThread(0, 0, (LPTHREAD_START_ROUTINE)Init, module, 0, 0);
+        DisableThreadLibraryCalls(module); // stop multiple calls to DllMain
+        CreateThread(0, 0, (LPTHREAD_START_ROUTINE)Init, module, 0, 0); // create a thread to init the cheat
     }
     return TRUE;
 }

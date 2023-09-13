@@ -56,53 +56,57 @@ static BOOL hkWglSwapBuffersDetour(HDC hdc) {
 			std::stringstream doubleBuffer;
 			doubleBuffer << "[" << (mod->enabled ? "x" : " ") << "] " << "[" << keymapNames[mod->keybind] << "] " << mod->name << std::endl;
 
-			// avoid weird artifacts
+			// avoid memory bleeding (still trauamtized from uwp apps bleeding for no reason so except more of these)
 			std::string text = doubleBuffer.str();
 
-			// draw text
+			// draw text (temp menu)
 			ImGui::Text(text.c_str());
 			ImGui::Text((std::string("- ") + mod->description.c_str()).c_str());
 			ImGui::Text("");
 		}
 
-		// restore font back to normal
-		ImGui::PopFont();
+		ImGui::PopFont(); // restore font back to normal
+
+		ImGui::End(); // end imgui window (the menu we're drawing currently)
 	}
 
-	ImGui::End();
-
-	// render imgui
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	ImGui::Render(); // render imgui
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); // render imgui draw data aswell
 
 	// call original wglSwapBuffers (present)
 	return __o__wglSwapBuffers(hdc);
 }
 
+// openal hook class
 class OpenALHook : public FuncHook {
 public:
+	// openal hook constructor
+	OpenALHook() : FuncHook("wglSwapBuffers") {}
+
 	bool Initialize() override {
 		// init openal/gl hook
-		std::cout << "Installing OpenAL Hook..." << std::endl;
+		//Log("Installing OpenAL Hook...");
 
+		// get the opengl 32bit dll module
 		HMODULE openGL32 = GetModuleHandleA("opengl32.dll");
 
 		if (!openGL32)
 			return false; // no openGL32.dll (avoid crashes)
 
-		std::cout << "Found opengl32.dll" << std::endl;
+		//Log("Found opengl32.dll");
 
+		// get wglSwapBuffers method reference from opengl 32bit module
 		wglSwapBuffers = (void*)GetProcAddress(openGL32, "wglSwapBuffers");
 
 		if (!wglSwapBuffers)
 			return false; // no wglSwapBuffers in opengl32 (avoid crashes)
 
-		std::cout << "Found wglSwapBuffers" << std::endl;
+		//Log("Found wglSwapBuffers");
 
 		if (not HookFunction(wglSwapBuffers, &hkWglSwapBuffersDetour, &__o__wglSwapBuffers))
 			return false; // failed to hook wglSwapBuffers
 
-		std::cout << "Hooked wglSwapBuffers, hook fully functional" << std::endl;
+		//Log("Hooked wglSwapBuffers, hook fully functional");
 
 		return true;
 	}
